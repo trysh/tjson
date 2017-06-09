@@ -9,10 +9,13 @@ import (
 
 type Json struct {
 	Data interface{}
+	JsonStr string
+	LastError error
 }
 
 func NewJsonFormStr(str string) *Json {
 	rtjson := &Json{}
+	rtjson.JsonStr=str
 	json.Unmarshal([]byte(str), &rtjson.Data)
 	return rtjson
 }
@@ -39,12 +42,13 @@ func (j *Json) Get(keys ...interface{}) *Json {
 		case string:
 			cpv, isobj := currp.(map[string]interface{})
 			if !isobj {
-				log.Printf(`unknow path key type %T %T`, key, currp)
+				j.LastError=fmt.Errorf(`unknow path key type %v %T,[%v]`, key, currp,j.JsonStr)
+				//log.Printf(j.LastError)
 				return nil
 			}
 			sigv, ishas := cpv[key]
 			if !ishas {
-				log.Printf(`unknow path key:%s`, key)
+				//log.Printf(`unknow path key:%s`, key)
 				return nil
 			}
 			currp = sigv
@@ -84,10 +88,10 @@ func (j *Json) Int(defaultV ...int) int {
 }
 
 func (j *Json) String() string {
-	return j.StringWithDefault(``)
+	return j.StrDef(``)
 }
 
-func (j *Json) StringWithDefault(defaultV ...string) string {
+func (j *Json) StrDef(defaultV ...string) string {
 	defaultv := ``
 	if len(defaultV) >= 1 {
 		defaultv = defaultV[0]
