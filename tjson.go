@@ -8,14 +8,14 @@ import (
 )
 
 type Json struct {
-	Data interface{}
-	JsonStr string
+	Data      interface{}
+	JsonStr   string
 	LastError error
 }
 
 func NewJsonFormStr(str string) *Json {
 	rtjson := &Json{}
-	rtjson.JsonStr=str
+	rtjson.JsonStr = str
 	json.Unmarshal([]byte(str), &rtjson.Data)
 	return rtjson
 }
@@ -31,7 +31,7 @@ func (j *Json) Get(keys ...interface{}) *Json {
 		case int:
 			cpv, isarr := currp.([]interface{})
 			if !isarr {
-				log.Printf(`unknow path key type %T %T`, key, currp)
+				log.Printf(`unknow path key type '%T' '%T'`, key, currp)
 				return nil
 			}
 			if key < 0 || key >= len(cpv) {
@@ -42,7 +42,7 @@ func (j *Json) Get(keys ...interface{}) *Json {
 		case string:
 			cpv, isobj := currp.(map[string]interface{})
 			if !isobj {
-				j.LastError=fmt.Errorf(`unknow path key type %v %T,[%v]`, key, currp,j.JsonStr)
+				j.LastError = fmt.Errorf(`unknow path key type %v %T,[%v]`, key, currp, j.JsonStr)
 				//log.Printf(j.LastError)
 				return nil
 			}
@@ -60,12 +60,22 @@ func (j *Json) Get(keys ...interface{}) *Json {
 	return &Json{Data: currp}
 }
 
+func (j *Json) Len() int {
+	if j == nil {
+		return 0
+	}
+	if vv, ok := j.Data.([]interface{}); ok {
+		return len(vv)
+	}
+	return 0
+}
+
 func (j *Json) Int(defaultV ...int) int {
 	defaultv := 0
 	if len(defaultV) >= 1 {
 		defaultv = defaultV[0]
 	}
-	if j==nil{
+	if j == nil {
 		return defaultv
 	}
 	switch vv := j.Data.(type) {
@@ -81,7 +91,7 @@ func (j *Json) Int(defaultV ...int) int {
 			return int(ri)
 		}
 	default:
-		log.Println(fmt.Errorf(`unknowType:%T %v`, j.Data,j.Data))
+		log.Println(fmt.Errorf(`unknowType:%T %v`, j.Data, j.Data))
 		return defaultv
 	}
 	return defaultv
@@ -96,7 +106,7 @@ func (j *Json) StrDef(defaultV ...string) string {
 	if len(defaultV) >= 1 {
 		defaultv = defaultV[0]
 	}
-	if j==nil{
+	if j == nil {
 		return defaultv
 	}
 	switch vv := j.Data.(type) {
@@ -106,11 +116,11 @@ func (j *Json) StrDef(defaultV ...string) string {
 		return strconv.Itoa(vv)
 	case float64:
 		return strconv.FormatFloat(vv, 'f', -1, 64)
-	case []interface{},map[string]interface{}:
+	case []interface{}, map[string]interface{}:
 		str, _ := json.Marshal(j.Data)
 		return string(str)
 	default:
-		log.Println(fmt.Errorf(`unknowType:%T %v`, j.Data,j.Data))
+		log.Println(fmt.Errorf(`unknowType:%T %v`, j.Data, j.Data))
 		return defaultv
 	}
 	return defaultv
