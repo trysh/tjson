@@ -20,6 +20,14 @@ func NewJsonFormStr(str string) *Json {
 	return rtjson
 }
 
+func (j *Json) Unmarshal(v interface{}) error {
+	return json.Unmarshal([]byte(j.JsonStr),v)
+}
+func (j *Json) Marshal() string {
+	bs,_:=json.Marshal(j.Data)
+	return string(bs)
+}
+
 func (j *Json) Get(keys ...interface{}) *Json {
 	if j == nil || len(keys) == 0 {
 		return j
