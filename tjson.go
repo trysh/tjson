@@ -98,6 +98,12 @@ func (j *Json) Int(defaultV ...int) int {
 		} else {
 			return int(ri)
 		}
+	case bool:
+		if vv{
+			return 1
+		}else{
+			return defaultv
+		}
 	default:
 		log.Println(fmt.Errorf(`unknowType:%T %v`, j.Data, j.Data))
 		return defaultv
@@ -124,6 +130,12 @@ func (j *Json) StrDef(defaultV ...string) string {
 		return strconv.Itoa(vv)
 	case float64:
 		return strconv.FormatFloat(vv, 'f', -1, 64)
+	case bool:
+		if vv{
+			return `true`
+		}else{
+			return `false`
+		}
 	case []interface{}, map[string]interface{}:
 		str, _ := json.Marshal(j.Data)
 		return string(str)
