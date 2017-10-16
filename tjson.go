@@ -2,9 +2,9 @@ package tjson
 
 import (
 	"encoding/json"
-	"strconv"
 	"fmt"
 	"log"
+	"strconv"
 )
 
 type Json struct {
@@ -21,10 +21,10 @@ func NewJsonFormStr(str string) *Json {
 }
 
 func (j *Json) Unmarshal(v interface{}) error {
-	return json.Unmarshal([]byte(j.JsonStr),v)
+	return json.Unmarshal([]byte(j.JsonStr), v)
 }
 func (j *Json) Marshal() string {
-	bs,_:=json.Marshal(j.Data)
+	bs, _ := json.Marshal(j.Data)
 	return string(bs)
 }
 
@@ -99,9 +99,9 @@ func (j *Json) Int(defaultV ...int) int {
 			return int(ri)
 		}
 	case bool:
-		if vv{
+		if vv {
 			return 1
-		}else{
+		} else {
 			return defaultv
 		}
 	default:
@@ -131,9 +131,9 @@ func (j *Json) StrDef(defaultV ...string) string {
 	case float64:
 		return strconv.FormatFloat(vv, 'f', -1, 64)
 	case bool:
-		if vv{
+		if vv {
 			return `true`
-		}else{
+		} else {
 			return `false`
 		}
 	case []interface{}, map[string]interface{}:
