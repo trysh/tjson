@@ -75,7 +75,23 @@ func (j *Json) Len() int {
 	if vv, ok := j.Data.([]interface{}); ok {
 		return len(vv)
 	}
+	if vv, ok := j.Data.(map[string]interface{}); ok {
+		return len(vv)
+	}
 	return 0
+}
+func (j *Json) Keys() []string {
+	var res []string
+	if j == nil {
+		return res
+	}
+	if vv, ok := j.Data.(map[string]interface{}); ok {
+		for k, _ := range vv {
+			res = append(res, k)
+		}
+		return res
+	}
+	return res
 }
 
 func (j *Json) Int(defaultV ...int) int {
